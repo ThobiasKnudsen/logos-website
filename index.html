@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logos — Just type math</title>
+  <meta name="description" content="Logos is a math program with its own programming language. Type mathematical expressions naturally and get instant results. GPU-accelerated, symbolic + numerical, free.">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111113;
+      --surface-2: #19191d;
+      --border: #222;
+      --border-light: #2a2a2e;
+      --text: #e8e8e8;
+      --text-dim: #888;
+      --accent: #7c3aed;
+      --accent-hover: #8b5cf6;
+      --accent-glow: rgba(124, 58, 237, 0.15);
+      --green: #7ecf8b;
+      --mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-family: 'Georgia', 'Times New Roman', 'Palatino Linotype', 'Book Antiqua', serif;
+    }
+
+    .logo span { color: #7c3aed; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-dim);
+      background: var(--surface-2);
+    }
+
+    /* SHOWCASE */
+    .showcase {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 8rem;
+    }
+
+    .showcase-label {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2rem;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    .showcase-item {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .showcase-item:hover {
+      border-color: var(--border-light);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .showcase-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .showcase-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 1.5rem 1.25rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    }
+
+    .showcase-caption h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .showcase-caption p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* DEMO */
+    .demo {
+      max-width: 720px;
+      margin: 0 auto 6rem;
+      padding: 0 2rem;
+    }
+
+    .demo-window {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .demo-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .demo-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .demo-dot:nth-child(1) { background: #ff5f57; }
+    .demo-dot:nth-child(2) { background: #febc2e; }
+    .demo-dot:nth-child(3) { background: #28c840; }
+
+    .demo-content {
+      padding: 1.5rem 2rem;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      line-height: 1.9;
+    }
+
+    .demo-line { color: var(--text); }
+    .demo-comment { color: var(--text-dim); font-style: italic; }
+    .demo-kw { color: #c678dd; }
+    .demo-fn { color: var(--accent); }
+    .demo-num { color: #e8a654; }
+    .demo-result { color: var(--green); }
+    .demo-op { color: #56b6c2; }
+
+    /* FEATURES */
+    .features {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header p {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-light);
+      background: var(--surface-2);
+    }
+
+    .feature-icon {
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--accent);
+      background: var(--accent-glow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* COMPARISON */
+    .comparison {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      text-align: left;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table thead th {
+      color: var(--text-dim);
+      font-weight: 500;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding-bottom: 0.75rem;
+    }
+
+    .compare-table td:first-child {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .compare-table .yes { color: var(--green); }
+    .compare-table .no { color: #555; }
+    .compare-table .highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .compare-table tbody tr {
+      transition: background 0.15s;
+    }
+
+    .compare-table tbody tr:hover {
+      background: var(--surface);
+    }
+
+    /* DOWNLOAD */
+    .download {
+      text-align: center;
+      padding: 6rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .download h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.03em;
+    }
+
+    .download p {
+      color: var(--text-dim);
+      margin-bottom: 2.5rem;
+      font-size: 1.1rem;
+    }
+
+    .download-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 1rem 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .download-btn:hover {
+      border-color: var(--accent);
+      background: var(--surface-2);
+    }
+
+    .download-btn .os { font-size: 1.3rem; }
+
+    .download-btn .info {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .coming-soon {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--text); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 0.75rem 1rem; }
+      nav a { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .compare-table { font-size: 0.85rem; }
+      .compare-table th, .compare-table td { padding: 0.6rem 0.5rem; }
+      .demo-content { padding: 1rem 1.25rem; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo"><span>&Lambda;</span>&#x03CC;&gamma;&omicron;&sigma;</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#compare">Compare</a>
+      <a href="docs.html">Docs</a>
+      <a href="#download">Download</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Just type math.<br><em>Get answers.</em></h1>
+    <p>A math program with its own programming language. Type expressions naturally, see results instantly. Symbolic, numerical, GPU-accelerated. Free.</p>
+    <div class="cta-group">
+      <a href="#download" class="btn btn-primary">Download</a>
+      <a href="docs.html" class="btn btn-secondary">Documentation</a>
+    </div>
+  </section>
+
+  <div class="showcase">
+    <p class="showcase-label">See it in action</p>
+    <div class="showcase-grid">
+      <div class="showcase-item">
+        <img src="images/mandlebrot_example.png" alt="Mandelbrot fractal visualization in Logos" loading="lazy">
+        <div class="showcase-caption">
+          <h3>Mandelbrot Set</h3>
+          <p>Real-time fractal rendering with GPU compute shaders</p>
+        </div>
+      </div>
+      <div class="showcase-item">
+        <img src="images/warp_example.png" alt="Gravitational warp visualization in Logos" loading="lazy">
+        <div class="showcase-caption">
+          <h3>Gravitational Warp</h3>
+          <p>Complex shader math with instant visual feedback</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-window">
+      <div class="demo-titlebar">
+        <div class="demo-dot"></div>
+        <div class="demo-dot"></div>
+        <div class="demo-dot"></div>
+      </div>
+      <div class="demo-content">
+        <div class="demo-line"><span class="demo-comment">// Simple ripple effect</span></div>
+        <div class="demo-line">r <span class="demo-op">:=</span> <span class="demo-fn">sqrt</span>(x <span class="demo-op">*</span> x <span class="demo-op">+</span> y <span class="demo-op">*</span> y)</div>
+        <div class="demo-line">wave <span class="demo-op">:=</span> <span class="demo-fn">sin</span>(r <span class="demo-op">*</span> <span class="demo-num">8.0</span> <span class="demo-op">-</span> t <span class="demo-op">*</span> <span class="demo-num">4.0</span>) <span class="demo-op">*</span> <span class="demo-num">0.5</span> <span class="demo-op">+</span> <span class="demo-num">0.5</span></div>
+        <div class="demo-line">fade <span class="demo-op">:=</span> <span class="demo-num">1.0</span> <span class="demo-op">-</span> <span class="demo-fn">clamp</span>(r <span class="demo-op">/</span> <span class="demo-num">5.0</span>, <span class="demo-num">0.0</span>, <span class="demo-num">1.0</span>)</div>
+        <div class="demo-line">v <span class="demo-op">:=</span> wave <span class="demo-op">*</span> fade</div>
+        <div class="demo-line">(v <span class="demo-op">*</span> <span class="demo-num">0.2</span>, v <span class="demo-op">*</span> <span class="demo-num">0.5</span>, v <span class="demo-op">*</span> <span class="demo-num">0.9</span>, <span class="demo-num">1.0</span>)</div>
+        <br>
+        <div class="demo-line"><span class="demo-comment">// Symbolic math</span></div>
+        <div class="demo-line"><span class="demo-fn">f</span>(x) <span class="demo-op">:=</span> x<span class="demo-op">^</span><span class="demo-num">3</span> <span class="demo-op">-</span> <span class="demo-num">4</span> <span class="demo-op">*</span> x <span class="demo-op">+</span> <span class="demo-num">1</span></div>
+        <div class="demo-line"><span class="demo-fn">&#x2202;</span>(<span class="demo-fn">f</span>(x), x) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="demo-result">&#x2192; 3 * x&#xB2; - 4</span></div>
+        <div class="demo-line"><span class="demo-fn">&#x222B;</span>(<span class="demo-num">3</span> <span class="demo-op">*</span> x<span class="demo-op">^</span><span class="demo-num">2</span> <span class="demo-op">-</span> <span class="demo-num">4</span>, x) &nbsp;&nbsp;<span class="demo-result">&#x2192; x&#xB3; - 4 * x</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2>Easy and powerful</h2>
+      <p>The tools you need without the complexity you don't.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon">f</span>
+        <h3>Just type math</h3>
+        <p>Write <code>x&sup2; + 3*x - 7</code> and see results instantly. No imports, no boilerplate, no compilation step. Unicode symbols like &pi;, &part;, &int; work natively.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&int;</span>
+        <h3>Symbolic algebra built in</h3>
+        <p>Differentiate, integrate, and simplify expressions symbolically &mdash; built in, not bolted on. Results appear as you type.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&#x25B6;</span>
+        <h3>GPU-accelerated</h3>
+        <p>Code compiles to WGSL shaders and runs on your GPU automatically. Write a <code>parallel for</code> loop and it dispatches to compute shaders.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&#x25A0;</span>
+        <h3>Real-time visualization</h3>
+        <p>Every expression renders live in the output pane. Fractals, surfaces, Monte Carlo paths &mdash; all animated and interactive with zoom and pan.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">Py</span>
+        <h3>Python SDK</h3>
+        <p>Use Logos from Python with <code>@logos</code> and <code>@logos_parallel</code> decorators. CPU JIT, GPU dispatch, zero-copy NumPy, and data ingress (CSV, SQL, HTTP, and more).</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&lambda;</span>
+        <h3>Full programming language</h3>
+        <p>Functions, loops, conditionals, arrays, and block expressions. Enough to write Monte Carlo simulations, solvers, and custom shaders from scratch.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="comparison" id="compare">
+    <div class="section-header">
+      <h2>How Logos compares</h2>
+      <p>Every tool makes trade-offs. Here's where Logos fits.</p>
+    </div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>MATLAB</th>
+          <th>Python + libs</th>
+          <th>Wolfram</th>
+          <th>GeoGebra</th>
+          <th class="highlight">Logos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Price</td>
+          <td class="no">~$900/yr</td>
+          <td class="yes">Free</td>
+          <td class="no">~$385/yr</td>
+          <td class="yes">Free</td>
+          <td class="yes">Free app, paid SDK</td>
+        </tr>
+        <tr>
+          <td>Natural math input</td>
+          <td class="no">Code only</td>
+          <td class="no">Code only</td>
+          <td class="yes">Partial</td>
+          <td class="yes">Yes</td>
+          <td class="yes">Yes</td>
+        </tr>
+        <tr>
+          <td>Symbolic algebra</td>
+          <td class="no">Add-on toolbox</td>
+          <td class="no">SymPy (slow)</td>
+          <td class="yes">Best in class</td>
+          <td class="no">Limited</td>
+          <td class="yes">Built-in</td>
+        </tr>
+        <tr>
+          <td>GPU compute</td>
+          <td class="no">Add-on toolbox</td>
+          <td class="no">Manual (CuPy, etc.)</td>
+          <td class="no">No</td>
+          <td class="no">No</td>
+          <td class="yes">Automatic</td>
+        </tr>
+        <tr>
+          <td>Real-time visualization</td>
+          <td class="no">Separate window</td>
+          <td class="no">matplotlib (static)</td>
+          <td class="yes">Inline</td>
+          <td class="yes">Yes</td>
+          <td class="yes">Live as you type</td>
+        </tr>
+        <tr>
+          <td>Performance</td>
+          <td class="yes">JIT</td>
+          <td class="no">Interpreted</td>
+          <td class="no">Interpreted</td>
+          <td class="no">Interpreted</td>
+          <td class="yes">Simplified, then compiled</td>
+        </tr>
+        <tr>
+          <td>Programming language</td>
+          <td class="yes">Full</td>
+          <td class="yes">Full</td>
+          <td class="yes">Full</td>
+          <td class="no">Minimal</td>
+          <td class="yes">Full</td>
+        </tr>
+        <tr>
+          <td>Easy to start</td>
+          <td class="no">Install + license</td>
+          <td class="no">pip install &times;5</td>
+          <td class="no">Install + license</td>
+          <td class="yes">Open browser</td>
+          <td class="yes">Download and run</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="download" id="download">
+    <h2>Download Logos</h2>
+    <p>Free for personal use. Available on all platforms.</p>
+    <div class="download-buttons">
+      <a href="#" class="download-btn">
+        <span class="os">&#x1F427;</span>
+        <span>Linux<br><span class="info">x86_64 AppImage</span></span>
+        <span class="coming-soon">soon</span>
+      </a>
+      <a href="#" class="download-btn">
+        <span class="os">&#x1F34E;</span>
+        <span>macOS<br><span class="info">Universal .dmg</span></span>
+        <span class="coming-soon">soon</span>
+      </a>
+      <a href="#" class="download-btn">
+        <span class="os">&#x1FA9F;</span>
+        <span>Windows<br><span class="info">x64 installer</span></span>
+        <span class="coming-soon">soon</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 Logos AS &mdash; <a href="mailto:contact@metalogos.net">contact@metalogos.net</a>
+  </footer>
+
+</body>
+</html>
