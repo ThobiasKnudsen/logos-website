@@ -171,117 +171,104 @@
       background: var(--surface-2);
     }
 
-    /* SHOWCASE */
-    .showcase {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem 8rem;
-    }
-
-    .showcase-label {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 2rem;
-    }
-
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      max-width: 840px;
-      margin: 0 auto;
-    }
-
-    .showcase-item {
+    /* CAROUSEL */
+    .carousel {
       position: relative;
-      border-radius: 14px;
+      width: 100%;
       overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      transition: border-color 0.3s, box-shadow 0.3s;
+      margin-bottom: 6rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
 
-    .showcase-item:hover {
-      border-color: var(--border-light);
-      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    .carousel-track {
+      display: flex;
+      transition: transform 0.4s ease;
     }
 
-    .showcase-item img {
+    .carousel-slide {
+      min-width: 100%;
+      position: relative;
+    }
+
+    .carousel-slide img {
       width: 100%;
       height: auto;
       display: block;
+      max-height: 70vh;
+      object-fit: cover;
     }
 
-    .showcase-caption {
+    .carousel-caption {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 2rem 1.5rem 1.25rem;
+      padding: 3rem 2rem 1.5rem;
       background: linear-gradient(transparent, rgba(0,0,0,0.85));
     }
 
-    .showcase-caption h3 {
-      font-size: 1rem;
+    .carousel-caption h3 {
+      font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 0.25rem;
     }
 
-    .showcase-caption p {
-      font-size: 0.85rem;
+    .carousel-caption p {
+      font-size: 0.9rem;
       color: var(--text-dim);
     }
 
-    /* DEMO */
-    .demo {
-      max-width: 720px;
-      margin: 0 auto 6rem;
-      padding: 0 2rem;
-    }
-
-    .demo-window {
-      background: var(--surface);
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .demo-titlebar {
+      color: var(--text);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 10;
     }
 
-    .demo-dot {
-      width: 12px;
-      height: 12px;
+    .carousel-btn:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .carousel-btn.prev { left: 1rem; }
+    .carousel-btn.next { right: 1rem; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--border);
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s;
     }
 
-    .demo-dot:nth-child(1) { background: #ff5f57; }
-    .demo-dot:nth-child(2) { background: #febc2e; }
-    .demo-dot:nth-child(3) { background: #28c840; }
-
-    .demo-content {
-      padding: 1.5rem 2rem;
-      font-family: var(--mono);
-      font-size: 0.95rem;
-      line-height: 1.9;
+    .carousel-dot.active {
+      background: var(--accent);
     }
-
-    .demo-line { color: var(--text); }
-    .demo-comment { color: var(--text-dim); font-style: italic; }
-    .demo-kw { color: #c678dd; }
-    .demo-fn { color: var(--accent); }
-    .demo-num { color: #e8a654; }
-    .demo-result { color: var(--green); }
-    .demo-op { color: #56b6c2; }
 
     /* FEATURES */
     .features {
@@ -518,60 +505,38 @@
     </div>
   </nav>
 
-  <div style="background: var(--accent-glow); border-bottom: 1px solid var(--border); text-align: center; padding: 0.6rem 1rem; font-size: 0.85rem; color: var(--text-dim);">
-    Under active development &mdash; features and documentation may change.
-  </div>
-
   <section class="hero">
     <h1>Just type math.<br><em>Get answers.</em></h1>
     <p>A math program with its own programming language. Type expressions naturally, see results instantly. Symbolic, numerical, GPU-accelerated. Free.</p>
+    <div style="display: inline-block; font-size: 0.85rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); padding: 0.5rem 1.25rem; border-radius: 20px; margin-bottom: 2rem; position: relative;">
+      Under active development &mdash; features and documentation may change.
+    </div>
     <div class="cta-group">
       <a href="#download" class="btn btn-primary">Download</a>
       <a href="docs.html" class="btn btn-secondary">Documentation</a>
     </div>
   </section>
 
-  <div class="showcase">
-    <p class="showcase-label">See it in action</p>
-    <div class="showcase-grid">
-      <div class="showcase-item">
-        <img src="images/mandlebrot_example.png" alt="Mandelbrot fractal visualization in Logos" loading="lazy">
-        <div class="showcase-caption">
+  <div class="carousel" id="carousel">
+    <div class="carousel-track" id="carousel-track">
+      <div class="carousel-slide">
+        <img src="images/mandlebrot_example.png" alt="Mandelbrot fractal visualization in Logos">
+        <div class="carousel-caption">
           <h3>Mandelbrot Set</h3>
           <p>Real-time fractal rendering with GPU compute shaders</p>
         </div>
       </div>
-      <div class="showcase-item">
-        <img src="images/warp_example.png" alt="Gravitational warp visualization in Logos" loading="lazy">
-        <div class="showcase-caption">
+      <div class="carousel-slide">
+        <img src="images/warp_example.png" alt="Gravitational warp visualization in Logos">
+        <div class="carousel-caption">
           <h3>Gravitational Warp</h3>
           <p>Complex shader math with instant visual feedback</p>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="demo">
-    <div class="demo-window">
-      <div class="demo-titlebar">
-        <div class="demo-dot"></div>
-        <div class="demo-dot"></div>
-        <div class="demo-dot"></div>
-      </div>
-      <div class="demo-content">
-        <div class="demo-line"><span class="demo-comment">// Simple ripple effect</span></div>
-        <div class="demo-line">r <span class="demo-op">:=</span> <span class="demo-fn">sqrt</span>(x <span class="demo-op">*</span> x <span class="demo-op">+</span> y <span class="demo-op">*</span> y)</div>
-        <div class="demo-line">wave <span class="demo-op">:=</span> <span class="demo-fn">sin</span>(r <span class="demo-op">*</span> <span class="demo-num">8.0</span> <span class="demo-op">-</span> t <span class="demo-op">*</span> <span class="demo-num">4.0</span>) <span class="demo-op">*</span> <span class="demo-num">0.5</span> <span class="demo-op">+</span> <span class="demo-num">0.5</span></div>
-        <div class="demo-line">fade <span class="demo-op">:=</span> <span class="demo-num">1.0</span> <span class="demo-op">-</span> <span class="demo-fn">clamp</span>(r <span class="demo-op">/</span> <span class="demo-num">5.0</span>, <span class="demo-num">0.0</span>, <span class="demo-num">1.0</span>)</div>
-        <div class="demo-line">v <span class="demo-op">:=</span> wave <span class="demo-op">*</span> fade</div>
-        <div class="demo-line">(v <span class="demo-op">*</span> <span class="demo-num">0.2</span>, v <span class="demo-op">*</span> <span class="demo-num">0.5</span>, v <span class="demo-op">*</span> <span class="demo-num">0.9</span>, <span class="demo-num">1.0</span>)</div>
-        <br>
-        <div class="demo-line"><span class="demo-comment">// Symbolic math</span></div>
-        <div class="demo-line"><span class="demo-fn">f</span>(x) <span class="demo-op">:=</span> x<span class="demo-op">^</span><span class="demo-num">3</span> <span class="demo-op">-</span> <span class="demo-num">4</span> <span class="demo-op">*</span> x <span class="demo-op">+</span> <span class="demo-num">1</span></div>
-        <div class="demo-line"><span class="demo-fn">&#x2202;</span>(<span class="demo-fn">f</span>(x), x) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="demo-result">&#x2192; 3 * x&#xB2; - 4</span></div>
-        <div class="demo-line"><span class="demo-fn">&#x222B;</span>(<span class="demo-num">3</span> <span class="demo-op">*</span> x<span class="demo-op">^</span><span class="demo-num">2</span> <span class="demo-op">-</span> <span class="demo-num">4</span>, x) &nbsp;&nbsp;<span class="demo-result">&#x2192; x&#xB3; - 4 * x</span></div>
-      </div>
-    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#x2039;</button>
+    <button class="carousel-btn next" onclick="moveCarousel(1)">&#x203A;</button>
+    <div class="carousel-dots" id="carousel-dots"></div>
   </div>
 
   <section class="features" id="features">
@@ -720,6 +685,32 @@
   <footer>
     &copy; 2026 Logos AS &mdash; <a href="mailto:contact@metalogos.net">contact@metalogos.net</a>
   </footer>
+
+  <script>
+    const track = document.getElementById('carousel-track');
+    const slides = track.querySelectorAll('.carousel-slide');
+    const dotsContainer = document.getElementById('carousel-dots');
+    let current = 0;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goTo(i);
+      dotsContainer.appendChild(dot);
+    });
+
+    function goTo(index) {
+      current = (index + slides.length) % slides.length;
+      track.style.transform = 'translateX(-' + (current * 100) + '%)';
+      dotsContainer.querySelectorAll('.carousel-dot').forEach((d, i) => {
+        d.className = 'carousel-dot' + (i === current ? ' active' : '');
+      });
+    }
+
+    function moveCarousel(dir) {
+      goTo(current + dir);
+    }
+  </script>
 
 </body>
 </html>
