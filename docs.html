@@ -484,18 +484,18 @@
 
       <h1>Logos Documentation</h1>
 
-      <p>Logos is a math program with its own programming language &mdash; combining natural math syntax, built-in symbolic algebra, GPU-accelerated computation via WGSL shaders, and instant visualization in a single tool.</p>
+      <p>Logos is a math program with its own programming language &mdash; combining natural math syntax, built-in symbolic algebra, GPU-accelerated computation, and powerful visualization in a single tool.</p>
 
       <h2 id="overview">Overview <a href="#overview" class="anchor">#</a></h2>
 
-      <p>Logos lets you type mathematical expressions naturally. Behind the scenes, a compiled pipeline turns your code into GPU compute shaders that run on your graphics card in real time. A built-in symbolic algebra system handles differentiation, integration, and simplification automatically.</p>
+      <p>Logos lets you type mathematical expressions naturally. A built-in symbolic algebra system handles differentiation, integration, and simplification automatically.</p>
 
       <p>Key capabilities:</p>
       <ul>
         <li><strong>Natural math syntax</strong> &mdash; write <code>f(x) := x^3 - 4*x + 1</code>, not <code>def f(x): return x**3 - 4*x + 1</code></li>
         <li><strong>Symbolic math</strong> &mdash; built-in symbolic algebra handles &#x2202;, &#x222B;, simplification</li>
-        <li><strong>GPU compute</strong> &mdash; code compiles to WGSL compute shaders automatically</li>
-        <li><strong>Instant visualization</strong> &mdash; output renders as colors in real time as you type</li>
+        <li><strong>GPU compute</strong> &mdash; code runs on your GPU automatically</li>
+        <li><strong>Powerful visualization</strong> &mdash; output renders as colors in real time as you type</li>
         <li><strong>LaTeX symbol completion</strong> &mdash; type <code>\pi</code> to get &pi;, <code>\integral</code> to get &#x222B;, <code>\alpha</code> to get &alpha;</li>
         <li><strong>Python interop</strong> &mdash; use Logos from Python with zero-copy NumPy integration</li>
       </ul>
@@ -530,7 +530,7 @@ nx <span class="op">:=</span> (<span class="ax">x</span> - <span class="ax">x</s
 ny <span class="op">:=</span> (<span class="ax">y</span> - <span class="ax">y</span>.min) / (<span class="ax">y</span>.max - <span class="ax">y</span>.min)
 (nx, ny, <span class="num">0.5</span> + <span class="num">0.5</span> * <span class="fn">sin</span>(<span class="ax">t</span>), <span class="num">1.0</span>)</code></pre>
 
-      <p>This produces a live animated gradient. The variables <code>x</code>, <code>y</code> are pixel coordinates, <code>t</code> is time, and the final tuple <code>(r, g, b, a)</code> is the output color.</p>
+      <p>This produces a live animated gradient. The variables <code>x</code>, <code>y</code> are pixel coordinates and <code>t</code> is time. The last line is a 4-tuple <code>(red, green, blue, alpha)</code> &mdash; this is the color output for each pixel. Here, <code>nx</code> controls the red channel (increasing left to right), <code>ny</code> controls green (increasing bottom to top), and blue pulses with <code>sin(t)</code>.</p>
 
       <pre><code><span class="cm">// Ripple effect</span>
 r <span class="op">:=</span> <span class="fn">sqrt</span>(<span class="ax">x</span> * <span class="ax">x</span> + <span class="ax">y</span> * <span class="ax">y</span>)
@@ -595,7 +595,7 @@ result <span class="op">:=</span> a + b
 
       <div class="callout warning">
         <strong>GPU limitation: f32 only</strong>
-        All GPU computation (fragment shaders, <code>parallel for</code> loops, and any implicitly parallelized code) uses <code>f32</code> exclusively. WGSL does not broadly support <code>f64</code> &mdash; attempting to use <code>f64</code> values in GPU code will produce an error. Some GPU hardware and future WGSL revisions may add <code>f64</code> support, but this is not available today. Use <code>f64</code> only in CPU-side code (e.g. the interpreter or Python SDK).
+        All GPU computation (<code>parallel for</code> loops and visualization code) uses <code>f32</code> exclusively. Attempting to use <code>f64</code> values in GPU code will produce an error. Use <code>f64</code> only in CPU-side code (e.g. the Python SDK).
       </div>
 
       <p>Explicit type cast:</p>
@@ -776,7 +776,7 @@ nx <span class="op">:=</span> (<span class="ax">x</span> - <span class="ax">x</s
 
       <h2 id="gpu-overview">GPU Overview <a href="#gpu-overview" class="anchor">#</a></h2>
 
-      <p>Every Logos program compiles to a WGSL fragment shader that runs on your GPU via wgpu. The code pane on the left is your shader source; the output pane on the right renders the result. Each pixel invokes your program with its <code>(x, y)</code> coordinates, and the final expression &mdash; a <code>(r, g, b, a)</code> tuple &mdash; determines the pixel's color.</p>
+      <p>Every Logos program runs on your GPU. The code pane on the left is your source; the output pane on the right renders the result. Each pixel invokes your program with its <code>(x, y)</code> coordinates, and the final expression &mdash; a <code>(red, green, blue, alpha)</code> tuple &mdash; determines the pixel's color.</p>
 
       <p>This means:</p>
       <ul>
@@ -788,19 +788,11 @@ nx <span class="op">:=</span> (<span class="ax">x</span> - <span class="ax">x</s
 
       <h2 id="gpu-pipeline">Compilation Pipeline <a href="#gpu-pipeline" class="anchor">#</a></h2>
 
-      <p>On every keystroke:</p>
-      <ol>
-        <li><strong>Lexer</strong> tokenizes source into tokens (keywords, identifiers, builtins, operators, numbers, etc.)</li>
-        <li><strong>Parser</strong> builds an AST with recursive-descent parsing</li>
-        <li><strong>WGSL Generator</strong> emits a WGSL fragment shader (<code>fs_main</code>) from the AST</li>
-        <li><strong>wgpu</strong> compiles and runs the shader on the GPU</li>
-      </ol>
-
-      <p>Functions with block bodies are emitted as imperative WGSL. Simple expressions are emitted as direct returns. Captured variables from enclosing scopes are passed as additional function parameters.</p>
+      <p>On every keystroke, Logos parses your code and compiles it to run on the GPU. The result updates immediately in the output pane.</p>
 
       <h2 id="parallel-for">Parallel For <a href="#parallel-for" class="anchor">#</a></h2>
 
-      <p>The <code>parallel for</code> construct dispatches loop iterations to the GPU as a compute shader. Each iteration runs independently on the GPU &mdash; there is no synchronization or communication between iterations.</p>
+      <p>The <code>parallel for</code> construct dispatches loop iterations to the GPU. Each iteration runs independently &mdash; there is no synchronization or communication between iterations. You can chain multiple <code>parallel for</code> loops sequentially; each one completes before the next begins.</p>
 
       <pre><code><span class="cm">// Double every element in an array</span>
 data <span class="op">:=</span> [<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>, <span class="num">4.0</span>, <span class="num">5.0</span>]
@@ -812,10 +804,8 @@ data <span class="op">:=</span> [<span class="num">1.0</span>, <span class="num"
       <ul>
         <li>Syntax: <code>parallel for <em>var</em> in <em>start</em>..<em>end</em> ( <em>body</em> )</code></li>
         <li>The body is a parenthesized block (comma-separated statements)</li>
-        <li>Arrays referenced in the body are uploaded to GPU storage buffers</li>
-        <li>Mutated arrays use read-write buffers; read-only arrays use read-only buffers</li>
-        <li>Scalar values from the enclosing scope are passed as uniform constants</li>
-        <li>Workgroup size is 64 threads; dispatched across the full range</li>
+        <li>Arrays referenced in the body are automatically sent to and from the GPU</li>
+        <li>Scalar values from the enclosing scope are available inside the loop body</li>
         <li>No nested <code>parallel for</code> &mdash; parallelism is flat (one level only)</li>
         <li>All array data must be <code>f32</code> &mdash; <code>f64</code> is not supported on the GPU</li>
       </ul>
@@ -837,11 +827,11 @@ factor <span class="op">:=</span> <span class="num">1.08</span>
 
       <h2 id="gpu-types">GPU Types <a href="#gpu-types" class="anchor">#</a></h2>
 
-      <p>On the GPU, all numeric values are <code>f32</code>. The <code>f64</code> type cannot be used in GPU code &mdash; any <code>f64</code> data in a <code>parallel for</code> or fragment shader will produce an error. The WGSL specification has limited <code>f64</code> support; future hardware and spec revisions may broaden this, but today all GPU work must use <code>f32</code>.</p>
+      <p>On the GPU, all numeric values are <code>f32</code>. The <code>f64</code> type cannot be used in GPU code &mdash; any <code>f64</code> data in a <code>parallel for</code> or visualization will produce an error. Today all GPU work must use <code>f32</code>.</p>
 
       <table>
         <thead>
-          <tr><th>Logos Type</th><th>WGSL Type</th><th>Description</th></tr>
+          <tr><th>Logos Type</th><th>GPU Type</th><th>Description</th></tr>
         </thead>
         <tbody>
           <tr><td><code>f32</code></td><td><code>f32</code></td><td>32-bit float (default for all GPU numerics)</td></tr>
