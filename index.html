@@ -445,6 +445,27 @@
       color: var(--text-dim);
     }
 
+    .download-btn.recommended {
+      border-color: var(--accent);
+      background: var(--surface-2);
+      box-shadow: 0 0 20px var(--accent-glow);
+      position: relative;
+    }
+
+    .download-btn.recommended::after {
+      content: 'Your platform';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.03em;
+    }
+
     .coming-soon {
       display: inline-block;
       font-size: 0.7rem;
@@ -663,16 +684,16 @@
   <section class="download" id="download">
     <h2>Download Logos</h2>
     <p>Free for personal use. Available on all platforms.</p>
-    <div class="download-buttons">
-      <a href="https://metalogos.net/downloads/logos-linux-x86_64.AppImage" class="download-btn" data-umami-event="download-linux">
+    <div class="download-buttons" id="download-buttons">
+      <a href="https://metalogos.net/downloads/logos-linux-x86_64.AppImage" class="download-btn" data-os="linux" data-umami-event="download-linux">
         <span class="os">&#x1F427;</span>
         <span>Linux<br><span class="info">x86_64 AppImage</span></span>
       </a>
-      <a href="https://metalogos.net/downloads/logos-macos-universal.dmg" class="download-btn" data-umami-event="download-macos">
+      <a href="https://metalogos.net/downloads/logos-macos-universal.dmg" class="download-btn" data-os="mac" data-umami-event="download-macos">
         <span class="os">&#x1F34E;</span>
         <span>macOS<br><span class="info">Universal .dmg</span></span>
       </a>
-      <a href="https://metalogos.net/downloads/logos-windows-x64.msi" class="download-btn" data-umami-event="download-windows">
+      <a href="https://metalogos.net/downloads/logos-windows-x64.msi" class="download-btn" data-os="win" data-umami-event="download-windows">
         <span class="os">&#x1FA9F;</span>
         <span>Windows<br><span class="info">x64 installer</span></span>
       </a>
@@ -680,7 +701,7 @@
   </section>
 
   <footer>
-    &copy; 2026 Logos AS &mdash; <a href="mailto:contact@metalogos.net">contact@metalogos.net</a>
+    &copy; 2026 Thobias Knudsen &mdash; <a href="mailto:contact@metalogos.net">contact@metalogos.net</a>
   </footer>
 
   <script>
@@ -707,6 +728,15 @@
     function moveCarousel(dir) {
       goTo(current + dir);
     }
+
+    (function() {
+      var ua = navigator.userAgent || navigator.platform || '';
+      var os = /Mac|iPhone|iPad/.test(ua) ? 'mac' : /Win/.test(ua) ? 'win' : /Linux/.test(ua) ? 'linux' : null;
+      if (os) {
+        var btn = document.querySelector('.download-btn[data-os="' + os + '"]');
+        if (btn) btn.classList.add('recommended');
+      }
+    })();
   </script>
 
 </body>
